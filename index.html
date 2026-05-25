@@ -524,17 +524,29 @@ const statusClass={pending:'st-pending',confirmed:'st-confirmed',delivery:'st-de
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
+// ── ADMINS ──
+const ADMIN_EMAILS_INDEX = [
+  'valentinpontin@hotmail.com',
+  'valenpontn8977@gmail.com'
+];
+
 // ── AUTH STATE ──
 auth.onAuthStateChanged(async function(user){
   currentUser=user;
   var btn=document.getElementById('navAuthBtn');
   if(!btn) return;
   if(user){
+    // Si es admin, mostrar link al panel en lugar del perfil de cliente
+    if(ADMIN_EMAILS_INDEX.includes(user.email)){
+      btn.textContent='⚙️ Panel Admin';
+      btn.className='nav-user-btn';
+      btn.onclick=function(e){e.stopPropagation();window.location.href='admin.html';};
+      return;
+    }
     var snap=await db.collection('users').doc(user.uid).get();
     var data=snap.data()||{};
     btn.textContent='👤 '+(data.name||user.email.split('@')[0]);
     btn.className='nav-user-btn';
-    // Use onclick only — no addEventListener to avoid stacking
     btn.onclick=function(e){e.stopPropagation();openProfile();};
     // Autofill form
     if(data.name) document.getElementById('fname').value=data.name;
