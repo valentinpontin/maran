@@ -547,12 +547,17 @@ function uploadToCloudinary(file, onProgress){
     fd.append('file',file);
     fd.append('upload_preset',UPLOAD_PRESET);
     fd.append('folder','maran-productos');
+    const url='https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload';
     const xhr=new XMLHttpRequest();
-    xhr.open('POST',`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+    xhr.open('POST', url);
     xhr.upload.onprogress=e=>{if(e.lengthComputable)onProgress(Math.round(e.loaded/e.total*100));};
     xhr.onload=()=>{
-      try{const r=JSON.parse(xhr.responseText);resolve(r.secure_url);}
-      catch{reject(new Error('Upload failed'));}
+      if(xhr.status===200){
+        try{const r=JSON.parse(xhr.responseText);resolve(r.secure_url);}
+        catch{reject(new Error('Parse error: '+xhr.responseText));}
+      } else {
+        reject(new Error('Upload error '+xhr.status+': '+xhr.responseText));
+      }
     };
     xhr.onerror=()=>reject(new Error('Network error'));
     xhr.send(fd);
@@ -646,7 +651,8 @@ document.getElementById('pFileInput').addEventListener('change', async e=>{
     setImgPreview(url);
     toast('✅ Foto subida correctamente','ok');
   } catch(err){
-    toast('❌ Error al subir la foto: '+err.message,'er');
+    toast('❌ '+err.message,'er');
+    console.error('Cloudinary error:',err);
   } finally {
     btn.textContent='📷 Cambiar foto';btn.disabled=false;
     prog.style.display='none';
