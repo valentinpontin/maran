@@ -942,7 +942,15 @@ function updateCartUI(){
     +'<div class="cart-total-row final"><span>Total estimado</span><span>$'+total.toLocaleString('es-AR')+'</span></div>'
     +'</div>'
     +'<button class="cart-checkout" id="checkoutBtn">✅ Confirmar Pedido →</button>';
-  document.getElementById('checkoutBtn').addEventListener('click',checkoutCart);
+  document.getElementById('checkoutBtn').addEventListener('click',function(){
+    if(!currentUser){
+      toggleCart();
+      openAuth();
+      showToast('👤 Iniciá sesión para continuar con tu pedido');
+      return;
+    }
+    checkoutCart();
+  });
 }
 
 function checkoutCart(){
