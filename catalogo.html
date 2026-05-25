@@ -300,15 +300,34 @@ input[type=range]{width:100%;accent-color:var(--green);cursor:pointer;}
     <button id="catProfileCloseBtn" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--gray)">✕</button>
     <div style="padding:1.8rem 2rem 2rem">
       <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:1.2rem">👤 Mi Cuenta</h2>
-      <div style="background:#f8fafc;border-radius:14px;padding:1rem;margin-bottom:1.2rem">
-        <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Nombre</span><span id="catProfName" style="font-weight:500">—</span></div>
-        <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Email</span><span id="catProfEmail" style="font-weight:500;font-size:.82rem">—</span></div>
-        <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Teléfono</span><span id="catProfPhone" style="font-weight:500">—</span></div>
-        <div style="display:flex;justify-content:space-between;padding:.45rem 0;font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Dirección</span><span id="catProfAddress" style="font-weight:500;text-align:right;max-width:200px">—</span></div>
+
+      <!-- VIEW -->
+      <div id="catViewSection">
+        <div style="background:#f8fafc;border-radius:14px;padding:1rem;margin-bottom:1rem">
+          <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Nombre</span><span id="catProfName" style="font-weight:500">—</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Email</span><span id="catProfEmail" style="font-weight:500;font-size:.82rem">—</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Teléfono</span><span id="catProfPhone" style="font-weight:500">—</span></div>
+          <div style="display:flex;justify-content:space-between;padding:.45rem 0;font-size:.87rem"><span style="color:var(--gray);font-size:.76rem;font-weight:600;text-transform:uppercase">Dirección</span><span id="catProfAddress" style="font-weight:500;text-align:right;max-width:200px">—</span></div>
+        </div>
+        <button id="catEditBtn" style="width:100%;padding:.75rem;background:var(--green-pale);color:var(--green);border:1.5px solid var(--green);border-radius:12px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;margin-bottom:1rem">✏️ Editar mis datos</button>
       </div>
+
+      <!-- EDIT -->
+      <div id="catEditSection" style="display:none">
+        <div style="margin-bottom:1rem">
+          <div style="margin-bottom:.7rem"><label style="font-size:.78rem;font-weight:600;display:block;margin-bottom:.3rem">Nombre</label><input id="catEditName" type="text" style="width:100%;padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.87rem;outline:none"></div>
+          <div style="margin-bottom:.7rem"><label style="font-size:.78rem;font-weight:600;display:block;margin-bottom:.3rem">Teléfono</label><input id="catEditPhone" type="tel" style="width:100%;padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.87rem;outline:none"></div>
+          <div style="margin-bottom:.7rem"><label style="font-size:.78rem;font-weight:600;display:block;margin-bottom:.3rem">Dirección</label><input id="catEditAddress" type="text" style="width:100%;padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:.87rem;outline:none"></div>
+        </div>
+        <div style="display:flex;gap:.7rem;margin-bottom:1rem">
+          <button id="catCancelEditBtn" style="flex:1;padding:.75rem;background:white;color:var(--gray);border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer">Cancelar</button>
+          <button id="catSaveBtn" style="flex:2;padding:.75rem;background:var(--green);color:white;border:none;border-radius:12px;font-family:inherit;font-size:.88rem;font-weight:600;cursor:pointer">💾 Guardar cambios</button>
+        </div>
+      </div>
+
       <div style="font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;margin-bottom:.8rem">📋 Mis pedidos</div>
       <div id="catProfileOrders"><p style="color:var(--gray);font-size:.85rem">Cargando...</p></div>
-      <button id="catLogoutBtn" style="width:100%;padding:.8rem;background:#fdf0ef;color:var(--red);border:1.5px solid var(--red);border-radius:12px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:1rem;transition:all .2s">🚪 Cerrar sesión</button>
+      <button id="catLogoutBtn" style="width:100%;padding:.8rem;background:#fdf0ef;color:var(--red);border:1.5px solid var(--red);border-radius:12px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:1rem">🚪 Cerrar sesión</button>
     </div>
   </div>
 </div>
@@ -393,7 +412,38 @@ function openProfileCat(){
   });
 }
 
-document.getElementById('catProfileCloseBtn').addEventListener('click',function(){
+document.getElementById('catEditBtn').addEventListener('click',function(){
+  document.getElementById('catViewSection').style.display='none';
+  document.getElementById('catEditSection').style.display='block';
+  document.getElementById('catEditName').value=userData.name||'';
+  document.getElementById('catEditPhone').value=userData.phone||'';
+  document.getElementById('catEditAddress').value=userData.address||'';
+});
+document.getElementById('catCancelEditBtn').addEventListener('click',function(){
+  document.getElementById('catEditSection').style.display='none';
+  document.getElementById('catViewSection').style.display='block';
+});
+document.getElementById('catSaveBtn').addEventListener('click',async function(){
+  if(!currentUser)return;
+  var name=document.getElementById('catEditName').value.trim();
+  var phone=document.getElementById('catEditPhone').value.trim();
+  var address=document.getElementById('catEditAddress').value.trim();
+  if(!name){showToast('⚠️ El nombre no puede estar vacío');return;}
+  this.textContent='Guardando...';this.disabled=true;
+  try{
+    await db.collection('users').doc(currentUser.uid).set({name:name,phone:phone,address:address},{merge:true});
+    userData.name=name;userData.phone=phone;userData.address=address;
+    document.getElementById('catProfName').textContent=name;
+    document.getElementById('catProfPhone').textContent=phone||'—';
+    document.getElementById('catProfAddress').textContent=address||'—';
+    var btn=document.getElementById('navAuthBtn');
+    if(btn) btn.textContent='👤 '+name;
+    document.getElementById('catEditSection').style.display='none';
+    document.getElementById('catViewSection').style.display='block';
+    showToast('✅ Datos actualizados');
+  }catch(e){showToast('❌ Error: '+e.message);}
+  this.textContent='💾 Guardar cambios';this.disabled=false;
+});
   document.getElementById('catProfileOverlay').style.display='none';
   if(profileOrdersUnsub){profileOrdersUnsub();profileOrdersUnsub=null;}
 });
