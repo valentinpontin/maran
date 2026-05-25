@@ -184,7 +184,7 @@ input[type=range]{width:100%;accent-color:var(--green);cursor:pointer;}
     <li><a href="index.html#cajas">Cajas Armadas</a></li>
     <li><a href="index.html#contacto">Contacto</a></li>
     <li><a href="catalogo.html" class="nav-cta">Hacer Pedido</a></li>
-    <li><button class="nav-login-btn" id="navAuthBtn">👤 Ingresar</button></li>
+    <li><button class="nav-login-btn" id="navAuthBtn" style="visibility:hidden">👤 Ingresar</button></li>
   </ul>
   <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
 </nav>
@@ -364,6 +364,7 @@ auth.onAuthStateChanged(function(user){
   currentUser=user;
   var btn=document.getElementById('navAuthBtn');
   if(!btn)return;
+  btn.style.visibility='visible'; // mostrar ahora que ya sabemos el estado
   if(user){
     if(ADMIN_EMAILS_CAT.includes(user.email)){
       btn.textContent='⚙️ Panel Admin';
@@ -444,6 +445,8 @@ document.getElementById('catSaveBtn').addEventListener('click',async function(){
   }catch(e){showToast('❌ Error: '+e.message);}
   this.textContent='💾 Guardar cambios';this.disabled=false;
 });
+
+document.getElementById('catProfileCloseBtn').addEventListener('click',function(){
   document.getElementById('catProfileOverlay').style.display='none';
   if(profileOrdersUnsub){profileOrdersUnsub();profileOrdersUnsub=null;}
 });

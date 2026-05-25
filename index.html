@@ -265,7 +265,7 @@ footer{background:var(--dark);color:white;padding:60px 5% 30px;}
     <li><a href="#cajas">Cajas Armadas</a></li>
     <li><a href="#contacto">Contacto</a></li>
     <li><a href="catalogo.html" class="nav-cta">Hacer Pedido</a></li>
-    <li><button class="nav-login-btn" id="navAuthBtn">👤 Ingresar</button></li>
+    <li><button class="nav-login-btn" id="navAuthBtn" style="visibility:hidden">👤 Ingresar</button></li>
   </ul>
   <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
 </nav>
@@ -535,6 +535,7 @@ auth.onAuthStateChanged(async function(user){
   currentUser=user;
   var btn=document.getElementById('navAuthBtn');
   if(!btn) return;
+  btn.style.visibility='visible';
   if(user){
     // Si es admin, mostrar link al panel en lugar del perfil de cliente
     if(ADMIN_EMAILS_INDEX.includes(user.email)){
