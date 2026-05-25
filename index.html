@@ -609,15 +609,25 @@ document.getElementById('doRegisterBtn').addEventListener('click',async function
   this.textContent='Creando cuenta...';this.disabled=true;
   try{
     var cred=await auth.createUserWithEmailAndPassword(email,pass);
-    // Reintentar escritura en Firestore hasta 3 veces por si el token tarda
-    var saved=false;
+    // Guardar datos en Firestore con reintentos
     for(var i=0;i<3;i++){
       try{
-        await db.collection('users').doc(cred.user.uid).set({name:name,email:email,phone:phone,address:address,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-        saved=true;break;
+        await db.collection('users').doc(cred.user.uid).set({
+          name:name,email:email,phone:phone,address:address,
+          createdAt:firebase.firestore.FieldValue.serverTimestamp()
+        });
+        break;
       }catch(fe){
         await new Promise(function(r){setTimeout(r,800);});
       }
+    }
+    // Actualizar nav manualmente sin esperar onAuthStateChanged
+    currentUser=cred.user;
+    var btn=document.getElementById('navAuthBtn');
+    if(btn){
+      btn.textContent='👤 '+name;
+      btn.className='nav-user-btn';
+      btn.onclick=function(e){e.stopPropagation();openProfile();};
     }
     closeAuth();
     showToast('✅ Cuenta creada. ¡Bienvenido '+name+'!');
