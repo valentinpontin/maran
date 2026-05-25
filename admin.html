@@ -443,8 +443,8 @@ const ADMIN_EMAILS = [
 
 // ── AUTH ──
 auth.onAuthStateChanged(user=>{
+  const btn=document.getElementById('loginBtn');
   if(user){
-    // Verificar que el email sea de un admin autorizado
     if(!ADMIN_EMAILS.includes(user.email)){
       auth.signOut();
       document.getElementById('loginScreen').style.display='flex';
@@ -452,6 +452,8 @@ auth.onAuthStateChanged(user=>{
       const errEl=document.getElementById('loginError');
       errEl.textContent='⛔ No tenés permiso para acceder al panel admin.';
       errEl.style.display='block';
+      // Reactivar el botón
+      if(btn){btn.textContent='Ingresar';btn.disabled=false;}
       return;
     }
     document.getElementById('loginScreen').style.display='none';
@@ -460,6 +462,8 @@ auth.onAuthStateChanged(user=>{
   } else {
     document.getElementById('loginScreen').style.display='flex';
     document.getElementById('adminShell').classList.remove('visible');
+    // Siempre reactivar el botón al volver al login
+    if(btn){btn.textContent='Ingresar';btn.disabled=false;}
   }
 });
 
