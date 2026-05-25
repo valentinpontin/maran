@@ -435,11 +435,12 @@ function toast(msg,type='ok'){const t=document.getElementById('toast');t.textCon
 function fmtDate(ts){if(!ts) return '—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});}
 
 // ── ADMINS AUTORIZADOS ──
-// Agregá acá todos los emails que pueden acceder al admin
 const ADMIN_EMAILS = [
   'valentinpontin@hotmail.com',
   'valenpontn8977@gmail.com'
 ];
+
+var loginAttempted = false;
 
 // ── AUTH ──
 auth.onAuthStateChanged(user=>{
@@ -449,20 +450,21 @@ auth.onAuthStateChanged(user=>{
       auth.signOut();
       document.getElementById('loginScreen').style.display='flex';
       document.getElementById('adminShell').classList.remove('visible');
-      const errEl=document.getElementById('loginError');
-      errEl.textContent='⛔ No tenés permiso para acceder al panel admin.';
-      errEl.style.display='block';
-      // Reactivar el botón
+      if(loginAttempted){
+        const errEl=document.getElementById('loginError');
+        errEl.textContent='⛔ No tenés permiso para acceder al panel admin.';
+        errEl.style.display='block';
+      }
       if(btn){btn.textContent='Ingresar';btn.disabled=false;}
       return;
     }
+    loginAttempted=false;
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('adminShell').classList.add('visible');
     startListeners();
   } else {
     document.getElementById('loginScreen').style.display='flex';
     document.getElementById('adminShell').classList.remove('visible');
-    // Siempre reactivar el botón al volver al login
     if(btn){btn.textContent='Ingresar';btn.disabled=false;}
   }
 });
@@ -478,9 +480,11 @@ async function doLogin(){
   const errEl=document.getElementById('loginError');
   errEl.style.display='none';
   if(!email||!pass){errEl.textContent='Completá email y contraseña';errEl.style.display='block';return;}
+  loginAttempted=true;
   btn.textContent='Ingresando...';btn.disabled=true;
   try{await auth.signInWithEmailAndPassword(email,pass);}
   catch(e){
+    loginAttempted=false;
     const msgs={'auth/invalid-credential':'Email o contraseña incorrectos','auth/user-not-found':'Usuario no encontrado','auth/wrong-password':'Contraseña incorrecta','auth/invalid-email':'Email inválido','auth/too-many-requests':'Demasiados intentos. Esperá unos minutos.'};
     errEl.textContent=msgs[e.code]||('Error: '+e.code);
     errEl.style.display='block';
