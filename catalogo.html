@@ -131,6 +131,23 @@ input[type=range]{width:100%;accent-color:var(--green);cursor:pointer;}
 .st-delivery{background:#f3e8ff;color:#7e22ce;}
 .st-delivered{background:var(--green-pale);color:var(--green);}
 .st-cancelled{background:#fdf0ef;color:var(--red);}
+/* AUTH MODAL */
+.auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:3000;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .25s;}
+.auth-overlay.open{opacity:1;pointer-events:auto;}
+.auth-modal{background:white;border-radius:24px;width:100%;max-width:420px;box-shadow:0 30px 80px rgba(0,0,0,.2);overflow:hidden;transform:translateY(16px);transition:transform .28s;position:relative;}
+.auth-overlay.open .auth-modal{transform:translateY(0);}
+.auth-modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--gray);z-index:1;}
+.auth-tabs{display:flex;border-bottom:2px solid var(--border);}
+.auth-tab{flex:1;padding:1rem;text-align:center;font-weight:600;font-size:.9rem;cursor:pointer;color:var(--gray);border:none;background:none;font-family:inherit;transition:all .2s;}
+.auth-tab.active{color:var(--green);border-bottom:2px solid var(--green);margin-bottom:-2px;}
+.auth-body{padding:2rem;}
+.auth-fg{margin-bottom:1rem;}
+.auth-fg label{display:block;font-size:.82rem;font-weight:600;margin-bottom:.38rem;}
+.auth-input{width:100%;padding:.72rem 1rem;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:.9rem;outline:none;transition:border-color .2s;}
+.auth-input:focus{border-color:var(--green);}
+.auth-btn-submit{width:100%;padding:.95rem;background:var(--green);color:white;border:none;border-radius:14px;font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;transition:all .25s;margin-top:.5rem;}
+.auth-btn-submit:hover{background:var(--green-light);}
+.auth-err{background:#fdf0ef;color:var(--red);border-radius:10px;padding:.65rem 1rem;font-size:.83rem;margin-top:.8rem;display:none;}
 .mobile-filter-btn{display:none;align-items:center;gap:.5rem;background:var(--green);color:white;border:none;padding:.6rem 1.2rem;border-radius:50px;font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;margin-bottom:1rem;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;}
 .sidebar-overlay.open{display:block;}
@@ -294,6 +311,32 @@ input[type=range]{width:100%;accent-color:var(--green);cursor:pointer;}
   </div>
 </div>
 
+<!-- AUTH MODAL CATALOGO -->
+<div class="auth-overlay" id="catAuthOverlay">
+  <div class="auth-modal">
+    <button class="auth-modal-close" id="catAuthClose">✕</button>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="catTabLogin">Ingresar</button>
+      <button class="auth-tab" id="catTabRegister">Registrarse</button>
+    </div>
+    <div id="catLoginPanel" class="auth-body">
+      <div class="auth-fg"><label>Email</label><input type="email" id="catAuthEmail" class="auth-input" placeholder="tu@email.com"></div>
+      <div class="auth-fg"><label>Contraseña</label><input type="password" id="catAuthPass" class="auth-input" placeholder="••••••••"></div>
+      <button class="auth-btn-submit" id="catDoLoginBtn">Ingresar</button>
+      <div class="auth-err" id="catLoginErr"></div>
+    </div>
+    <div id="catRegisterPanel" class="auth-body" style="display:none">
+      <div class="auth-fg"><label>Nombre completo</label><input type="text" id="catRegName" class="auth-input" placeholder="Tu nombre"></div>
+      <div class="auth-fg"><label>Email</label><input type="email" id="catRegEmail" class="auth-input" placeholder="tu@email.com"></div>
+      <div class="auth-fg"><label>Contraseña (mín. 6 caracteres)</label><input type="password" id="catRegPass" class="auth-input" placeholder="••••••••"></div>
+      <div class="auth-fg"><label>Teléfono</label><input type="tel" id="catRegPhone" class="auth-input" placeholder="341 000-0000"></div>
+      <div class="auth-fg"><label>Dirección</label><input type="text" id="catRegAddress" class="auth-input" placeholder="Calle, número, depto"></div>
+      <button class="auth-btn-submit" id="catDoRegisterBtn">Crear cuenta</button>
+      <div class="auth-err" id="catRegisterErr"></div>
+    </div>
+  </div>
+</div>
+
 <!-- PROFILE MODAL CATALOGO -->
 <div id="catProfileOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:2000;align-items:center;justify-content:center;padding:1rem;">
   <div style="background:white;border-radius:22px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,.2);position:relative;">
@@ -364,7 +407,7 @@ auth.onAuthStateChanged(function(user){
   currentUser=user;
   var btn=document.getElementById('navAuthBtn');
   if(!btn)return;
-  btn.style.visibility='visible'; // mostrar ahora que ya sabemos el estado
+  btn.style.visibility='visible';
   if(user){
     if(ADMIN_EMAILS_CAT.includes(user.email)){
       btn.textContent='⚙️ Panel Admin';
@@ -382,8 +425,90 @@ auth.onAuthStateChanged(function(user){
     userData={};
     btn.textContent='👤 Ingresar';
     btn.className='nav-login-btn';
-    btn.onclick=function(e){e.stopPropagation();window.location.href='index.html';};
+    btn.onclick=function(e){e.stopPropagation();openCatAuth();};
   }
+});
+
+// ── AUTH MODAL ──
+function openCatAuth(tab){
+  document.getElementById('catAuthOverlay').classList.add('open');
+  if(tab==='register'){
+    document.getElementById('catTabRegister').click();
+  } else {
+    document.getElementById('catTabLogin').click();
+  }
+}
+function closeCatAuth(){
+  document.getElementById('catAuthOverlay').classList.remove('open');
+  document.getElementById('catTabLogin').classList.add('active');
+  document.getElementById('catTabRegister').classList.remove('active');
+  document.getElementById('catLoginPanel').style.display='block';
+  document.getElementById('catRegisterPanel').style.display='none';
+  document.getElementById('catLoginErr').style.display='none';
+  document.getElementById('catRegisterErr').style.display='none';
+}
+
+document.getElementById('catAuthClose').addEventListener('click',closeCatAuth);
+document.getElementById('catAuthOverlay').addEventListener('click',function(e){if(e.target===this)closeCatAuth();});
+document.getElementById('catTabLogin').addEventListener('click',function(){
+  this.classList.add('active');document.getElementById('catTabRegister').classList.remove('active');
+  document.getElementById('catLoginPanel').style.display='block';document.getElementById('catRegisterPanel').style.display='none';
+});
+document.getElementById('catTabRegister').addEventListener('click',function(){
+  this.classList.add('active');document.getElementById('catTabLogin').classList.remove('active');
+  document.getElementById('catRegisterPanel').style.display='block';document.getElementById('catLoginPanel').style.display='none';
+});
+
+document.getElementById('catDoLoginBtn').addEventListener('click',async function(){
+  var email=document.getElementById('catAuthEmail').value.trim();
+  var pass=document.getElementById('catAuthPass').value;
+  var errEl=document.getElementById('catLoginErr');
+  errEl.style.display='none';
+  if(!email||!pass){errEl.textContent='Completá email y contraseña';errEl.style.display='block';return;}
+  this.textContent='Ingresando...';this.disabled=true;
+  try{
+    await auth.signInWithEmailAndPassword(email,pass);
+    closeCatAuth();
+    showToast('✅ Bienvenido de nuevo');
+  }catch(e){
+    var msgs={'auth/invalid-credential':'Email o contraseña incorrectos','auth/user-not-found':'Usuario no encontrado','auth/wrong-password':'Contraseña incorrecta','auth/too-many-requests':'Demasiados intentos'};
+    errEl.textContent=msgs[e.code]||'Error: '+e.code;errEl.style.display='block';
+  }
+  this.textContent='Ingresar';this.disabled=false;
+});
+document.getElementById('catAuthEmail').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('catDoLoginBtn').click();});
+document.getElementById('catAuthPass').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('catDoLoginBtn').click();});
+
+document.getElementById('catDoRegisterBtn').addEventListener('click',async function(){
+  var name=document.getElementById('catRegName').value.trim();
+  var email=document.getElementById('catRegEmail').value.trim();
+  var pass=document.getElementById('catRegPass').value;
+  var phone=document.getElementById('catRegPhone').value.trim();
+  var address=document.getElementById('catRegAddress').value.trim();
+  var errEl=document.getElementById('catRegisterErr');
+  errEl.style.display='none';
+  if(!name||!email||!pass){errEl.textContent='Completá nombre, email y contraseña';errEl.style.display='block';return;}
+  if(pass.length<6){errEl.textContent='La contraseña debe tener al menos 6 caracteres';errEl.style.display='block';return;}
+  this.textContent='Creando cuenta...';this.disabled=true;
+  try{
+    var cred=await auth.createUserWithEmailAndPassword(email,pass);
+    for(var i=0;i<3;i++){
+      try{
+        await db.collection('users').doc(cred.user.uid).set({name:name,email:email,phone:phone,address:address,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+        break;
+      }catch(fe){await new Promise(function(r){setTimeout(r,800);});}
+    }
+    userData={name:name,phone:phone,address:address};
+    currentUser=cred.user;
+    var btn=document.getElementById('navAuthBtn');
+    if(btn){btn.textContent='👤 '+name;btn.className='nav-user-btn';btn.onclick=function(e){e.stopPropagation();openProfileCat();};}
+    closeCatAuth();
+    showToast('✅ Cuenta creada. ¡Bienvenido '+name+'!');
+  }catch(e){
+    var msgs={'auth/email-already-in-use':'Ese email ya está registrado','auth/invalid-email':'Email inválido','auth/weak-password':'Contraseña muy débil'};
+    errEl.textContent=msgs[e.code]||'Error: '+e.code;errEl.style.display='block';
+  }
+  this.textContent='Crear cuenta';this.disabled=false;
 });
 
 function openProfileCat(){
@@ -644,7 +769,15 @@ function updateCartUI(){
     +'<div class="cart-total-row final"><span>Total</span><span>$'+total.toLocaleString('es-AR')+'</span></div>'
     +'</div>'
     +'<button class="cart-checkout" id="checkoutBtn">✅ Confirmar pedido</button>';
-  document.getElementById('checkoutBtn').addEventListener('click',showCheckout);
+  document.getElementById('checkoutBtn').addEventListener('click',function(){
+    if(!currentUser){
+      toggleCart();
+      openCatAuth('login');
+      showToast('👤 Iniciá sesión para continuar con tu pedido');
+      return;
+    }
+    showCheckout();
+  });
 }
 
 // ── CHECKOUT ESTILO ECOMMERCE ──
